@@ -1,0 +1,72 @@
+<%- include("../layouts/boilerplate.ejs") -%>
+
+<div class="row mt-4">
+    <h1 class="col-6 offset-3">SignUp on Digilocker</h1>
+    <div class="col-6 offset-3">
+        <form method="POST" action="/auth/signup" class="needs-validation <%= wasValidated ? 'was-validated' : '' %>" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input name="username" id="username" type="text" class="form-control" value="<%= formData?.username || '' %>" required>
+                <div class="valid-feedback">
+                    Valid username!
+                </div>
+                <div class="invalid-feedback">
+                    Please provide a valid username.
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input name="email" id="email" type="email" class="form-control <%= emailError ? 'is-invalid' : '' %>" value="<%= formData?.email || '' %>" required>
+                <div class="valid-feedback">
+                    Valid email!
+                </div>
+                <div class="invalid-feedback">
+                    <%= emailError || 'Please provide a valid email.' %>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input name="password" id="password" type="password" class="form-control <%= passwordError ? 'is-invalid' : '' %>" value="<%= formData?.password || '' %>" required>
+            </div>
+            <div class="mb-3">
+                <label for="passwordConfirm" class="form-label">Confirm Password</label>
+                <input name="passwordConfirm" id="passwordConfirm" type="password" class="form-control <%= passwordError ? 'is-invalid' : '' %>" value="<%= formData?.passwordConfirm || '' %>" required>
+                <div class="invalid-feedback">
+                    Passwords do not match.
+                </div>
+            </div>
+            <button class="btn btn-success col-4 offset-4">SignUp</button>
+        </form>
+    </div>
+</div>
+
+<script>
+  (function () {
+    'use strict';
+    window.addEventListener('load', function () {
+      const form = document.querySelector('.needs-validation');
+      const password = document.getElementById('password');
+      const passwordConfirm = document.getElementById('passwordConfirm');
+
+      form.addEventListener('submit', function (event) {
+        // Reset custom validity
+        passwordConfirm.setCustomValidity('');
+
+        // Check if passwords match
+        if (password.value !== passwordConfirm.value) {
+          passwordConfirm.setCustomValidity('Passwords do not match');
+        }
+
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+
+          const firstInvalid = form.querySelector('.is-invalid');
+          if (firstInvalid) firstInvalid.focus();
+        }
+
+        form.classList.add('was-validated');
+      }, false);
+    }, false);
+  })();
+</script>
