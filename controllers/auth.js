@@ -6,8 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// to avoid duplicates because of case sensitivity
-const normalizeEmail = email => email.trim().toLowerCase();
 
 // Helper to send OTP email
 async function sendOtpEmail(to, otp) {
@@ -27,10 +25,10 @@ async function sendOtpEmail(to, otp) {
   });
 }
 
-// POST /signup
+// POST /auth/signup
 async function signup(req, res) {
   const { username, email, password, passwordConfirm } = req.body;
-  const normalizedEmail = normalizeEmail(email);
+  const normalizedEmail = email.trim().toLowerCase(); // to avoid duplicates because of case sensitivity
 
   try {
     const [existing] = await db.execute(
@@ -76,13 +74,13 @@ async function signup(req, res) {
   }
 }
 
-// GET /verify-otp
+// GET /auth/verify-otp
 function getVerifyOtp(req, res) {
   // console.log("verify-otp route hit");
   res.render('verifyOtp', { error: null, resent: false });
 }
 
-// POST /verify-otp
+// POST /auth/verify-otp
 async function postVerifyOtp(req, res) {
   const { otp } = req.body;
   const pendingUser = req.session.pendingUser;
@@ -119,7 +117,7 @@ async function postVerifyOtp(req, res) {
   res.redirect('/login');
 }
 
-// POST /resend-otp
+// POST /auth/resend-otp
 async function resendOtp(req, res) {
   const pendingUser = req.session.pendingUser;
   if (!pendingUser) return res.redirect('/auth/signup');
@@ -135,11 +133,51 @@ async function resendOtp(req, res) {
   res.render('verifyOtp', { error: null, resent: true });
 }
 
+// POST /auth/login
+async function login(req, res) {
+  const { email, password } = req.body;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  try {
+    // console.log("Login attempt", normalizedEmail);
+    const [rows] = await db.execute(
+      'SELECT * FROM users WHERE email = ?',
+      [normalizedEmail]
+    );
+
+    if (rows.length === 0) {
+      req.flash('error', 'Email does not exist. Please signup first.');
+      return res.redirect('/auth/login');
+    }
+
+    const user = rows[0];
+    // console.log(user);
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
+      console.log(req.body);
+      req.flash('error', 'Invalid password.');
+      console.log("Flash error set:", req.flash('error'));
+      req.flash('formData', req.body);
+      return res.redirect('/auth/login');
+    }
+
+    req.session.userId = user.id;
+    req.flash('success', 'Login successful! Welcome to Digilocker.');
+    res.redirect('/');
+
+  } catch (err) {
+    console.log(err);
+    res.status(500).send('Server error. Please try again later.')
+  }
+}
+
 const authController = {
   signup,
   getVerifyOtp,
   postVerifyOtp,
-  resendOtp
+  resendOtp, 
+  login
 };
 
 export default authController;

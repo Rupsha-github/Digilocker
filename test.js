@@ -17,8 +17,8 @@ transporter.sendMail({
   text: 'This is a test email from Nodemailer.'
 }, (err, info) => {
   if (err) {
-    console.error("❌ Email failed:", err);
+    console.error("Email failed:", err);
   } else {
-    console.log("✅ Email sent:", info.response);
+    console.log("Email sent:", info.response);
   }
 });

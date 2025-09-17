@@ -1,4 +1,11 @@
 <%- include("../layouts/boilerplate.ejs") -%>
+
+<% if (successMessage && successMessage.length > 0) { %>
+  <div class="alert alert-success text-center mt-3 mx-auto" style="max-width: 600px;">
+    <%= successMessage %>
+  </div>
+<% } %>
+
 <body>
     <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
             <!-- <h1>Home Page</h1> -->
@@ -12,5 +19,6 @@
             </div>
         </div>
     </div>
+    <script src="/js/timeout.js"></script>
 </body>
 </html>

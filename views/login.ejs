@@ -15,16 +15,17 @@
 <div class="row mt-4">
     <h1 class="col-6 offset-3">Login to Digilocker</h1>
     <div class="col-6 offset-3">
-        <form method="POST" action="/login" class="needs-validation" novalidate>
+        <form method="POST" action="/auth/login" class="needs-validation" novalidate>
             <div class="mb-3">
-                <lable for="username" class="form-label">Username</lable>
-                <input name="username" id="username" type="text" class="form-control" required>
+                <label for="email" class="form-label">Email</label>
+                <input name="email" id="email" type="email" value="<%= formData.email || '' %>" class="form-control" required>
             </div>
             <div class="mb-3">
-                <lable for="password" class="form-label">Password</lable>
+                <label for="password" class="form-label">Password</label>
                 <input name="password" id="password" type="password" class="form-control" required>
             </div>
             <button class="btn btn-success col-4 offset-4">Login</button>
         </form>
     </div>
 </div>
+<script src="/js/timeout.js"></script>
