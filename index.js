@@ -30,6 +30,7 @@ app.use(flash());
 app.use((req, res, next) => {
   res.locals.successMessage = req.flash('success');
   res.locals.errorMessage = req.flash('error');
+  res.locals.infoMessage = req.flash('info');
   next();
 });
 
@@ -39,6 +40,7 @@ app.use((req, res, next) => {
   res.locals.passwordError = null;
   res.locals.formData = {};
   res.locals.wasValidated = false;
+  res.locals.userId = req.session.userId || null;
   next();
 });
 
@@ -85,6 +87,10 @@ try {
 app.use("/", userRouter);
 app.use("/auth", authRouter);
 
+app.use((req, res) => {
+  req.flash('info', 'Page not found. Redirected to home.');
+  res.redirect('/');
+});
 
 app.listen(process.env.PORT, () => {
     console.log(`Server listening to port ${process.env.PORT}`);

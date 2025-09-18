@@ -26,7 +26,7 @@ router.post('/verify-otp', requirePendingUser, authController.postVerifyOtp);
 // POST : Resend OTP
 router.post('/resend-otp', requirePendingUser, authController.resendOtp);
 
-// Login form
+// GET : Login form
 router.get('/login', (req, res) => {
   res.render('login', {
     formData: req.flash('formData')[0] || {}
@@ -34,7 +34,13 @@ router.get('/login', (req, res) => {
   console.log("Flash error received:", res.locals.errorMessage);
 });
 
-// Login logic
+// POST : Login 
 router.post('/login', authController.login);
+
+router.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
+});
 
 export default router;

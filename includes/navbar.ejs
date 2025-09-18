@@ -1,14 +1,24 @@
 <nav>
-    <ul>
-        <li style="display: flex; align-items: baseline;">
-            <a href="/" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; vertical-align: middle;">
-                <img width="20" height="20" src="https://img.icons8.com/material/24/FFFFFF/home--v5.png" alt="home--v5" style="vertical-align: middle;"/>
-                <span style="font-size: large;">Home</span>
-            </a>
-        </li>
-    </ul>
-    <ul>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/signup">Sign up</a></li>
-    </ul>
+  <ul>
+    <li>
+      <a href="/" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; vertical-align: middle;">
+        <img width="20" height="20" src="https://img.icons8.com/material/24/FFFFFF/home--v5.png" alt="home--v5" style="vertical-align: middle;" />
+        <span style="font-size: large;">Home</span>
+      </a>
+    </li>
+  </ul>
+
+  <ul>
+    <% if (userId) { %>
+      <li><a href="/dashboard">Dashboard</a></li>
+      <li>
+        <form method="POST" action="/auth/logout" style="display: inline;">
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+      </li>
+    <% } else { %>
+      <li><a href="/login">Login</a></li>
+      <li><a href="/signup">Sign up</a></li>
+    <% } %>
+  </ul>
 </nav>

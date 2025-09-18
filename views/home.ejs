@@ -6,6 +6,12 @@
   </div>
 <% } %>
 
+<% if (infoMessage && infoMessage.length > 0) { %>
+  <div class="alert alert-info text-center mt-3 mx-auto" style="max-width: 600px;">
+    <%= infoMessage %>
+  </div>
+<% } %>
+
 <body>
     <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
             <!-- <h1>Home Page</h1> -->
