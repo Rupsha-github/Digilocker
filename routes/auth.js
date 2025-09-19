@@ -1,46 +1,29 @@
 import express from 'express';
 import authController from '../controllers/auth.js';
 import { requirePendingUser } from '../middlewares/requirePendingUser.js';
+import { isLoggedIn, requireAuth } from '../middlewares/authGuards.js';
 
 const router = express.Router();
 
-// GET : Signup form
-router.get('/signup', (req, res) => {
-  res.render('signup', {
-    emailError: null,
-    passwordError: null,
-    formData: {},
-    wasValidated: false
-  });
-});
+// SIGNUP ROUTES
+router.route('/signup')
+      .get(isLoggedIn, authController.getSignup)
+      .post(isLoggedIn, authController.postSignup);
 
-// POST : Signup 
-router.post('/signup', authController.signup);
-
-// GET : OTP verification form
-router.get('/verify-otp', requirePendingUser, authController.getVerifyOtp);
-
-// POST : OTP verification 
-router.post('/verify-otp', requirePendingUser, authController.postVerifyOtp);
+// VERIFY OTP ROUTES
+router.route('/verify-otp')
+      .get(requirePendingUser, authController.getVerifyOtp)
+      .post(requirePendingUser, authController.postVerifyOtp);
 
 // POST : Resend OTP
 router.post('/resend-otp', requirePendingUser, authController.resendOtp);
 
-// GET : Login form
-router.get('/login', (req, res) => {
-  res.render('login', {
-    formData: req.flash('formData')[0] || {}
-  });
-  console.log("Flash error received:", res.locals.errorMessage);
-});
+// LOGIN ROUTES
+router.route('/login')
+      .get(isLoggedIn, authController.getLogin)
+      .post(isLoggedIn, authController.postLogin);
 
-// POST : Login 
-router.post('/login', authController.login);
-
-router.post('/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/');
-  });
-});
+// LOGOUT ROUTE
+router.post('/logout', requireAuth, authController.postLogout);
 
 export default router;

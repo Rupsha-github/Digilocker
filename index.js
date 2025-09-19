@@ -21,8 +21,12 @@ app.use(express.static(path.join(__dirname, "/public")));
 app.use(session({
   secret: process.env.SECRET_KEY, 
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 600000 } //expires after 10 minutes
+  saveUninitialized: false,
+  cookie: { 
+    maxAge: 600000,  //expires after 10 minutes
+    httpOnly: true,
+    sameSite: 'lax'
+  } 
 }));
 
 app.use(flash());
@@ -31,6 +35,7 @@ app.use((req, res, next) => {
   res.locals.successMessage = req.flash('success');
   res.locals.errorMessage = req.flash('error');
   res.locals.infoMessage = req.flash('info');
+  res.locals.formData = req.flash('formData')[0] || {};
   next();
 });
 
@@ -86,6 +91,10 @@ try {
 
 app.use("/", userRouter);
 app.use("/auth", authRouter);
+app.get('/test-session', (req, res) => {
+  console.log("Session userId in /test-session:", req.session.userId);
+  res.send(`Session userId: ${req.session.userId}`);
+});
 
 app.use((req, res) => {
   req.flash('info', 'Page not found. Redirected to home.');

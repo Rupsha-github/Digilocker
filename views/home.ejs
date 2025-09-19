@@ -12,6 +12,12 @@
   </div>
 <% } %>
 
+<% if (errorMessage && errorMessage.length > 0) { %>
+  <div class="alert alert-danger text-center mt-3 mx-auto" style="max-width: 600px;">
+    <%= errorMessage %>
+  </div>
+<% } %>
+
 <body>
     <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
             <!-- <h1>Home Page</h1> -->

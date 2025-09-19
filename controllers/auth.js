@@ -25,8 +25,18 @@ async function sendOtpEmail(to, otp) {
   });
 }
 
-// POST /auth/signup
-async function signup(req, res) {
+// GET : /auth/signup
+export const getSignup = (req, res) => {
+  res.render('signup', {
+    emailError: null,
+    passwordError: null,
+    formData: {},
+    wasValidated: false
+  });
+};
+
+// POST : /auth/signup
+async function postSignup(req, res) {
   const { username, email, password, passwordConfirm } = req.body;
   const normalizedEmail = email.trim().toLowerCase(); // to avoid duplicates because of case sensitivity
 
@@ -74,13 +84,13 @@ async function signup(req, res) {
   }
 }
 
-// GET /auth/verify-otp
+// GET : /auth/verify-otp
 function getVerifyOtp(req, res) {
   // console.log("verify-otp route hit");
   res.render('verifyOtp', { error: null, resent: false });
 }
 
-// POST /auth/verify-otp
+// POST : /auth/verify-otp
 async function postVerifyOtp(req, res) {
   const { otp } = req.body;
   const pendingUser = req.session.pendingUser;
@@ -117,12 +127,13 @@ async function postVerifyOtp(req, res) {
   res.redirect('/login');
 }
 
-// POST /auth/resend-otp
+// POST : /auth/resend-otp
 async function resendOtp(req, res) {
   const pendingUser = req.session.pendingUser;
   if (!pendingUser) return res.redirect('/auth/signup');
 
   const otp = crypto.randomInt(100000, 999999).toString();
+  // console.log(otp);
   const expiresAt = Date.now() + 10 * 60 * 1000;
 
   pendingUser.otp = otp;
@@ -133,8 +144,14 @@ async function resendOtp(req, res) {
   res.render('verifyOtp', { error: null, resent: true });
 }
 
-// POST /auth/login
-async function login(req, res) {
+// GET : /auth/login
+export const getLogin = (req, res) => {
+  res.render('login')
+};
+
+
+// POST : /auth/login
+async function postLogin(req, res) {
   const { email, password } = req.body;
   const normalizedEmail = email.trim().toLowerCase();
 
@@ -147,7 +164,10 @@ async function login(req, res) {
 
     if (rows.length === 0) {
       req.flash('error', 'Email does not exist. Please signup first.');
-      return res.redirect('/auth/login');
+      req.session.save(() => {
+        res.redirect('/auth/login');
+      });
+      return;
     }
 
     const user = rows[0];
@@ -155,12 +175,14 @@ async function login(req, res) {
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      console.log(req.body);
       req.flash('error', 'Invalid password.');
-      console.log("Flash error set:", req.flash('error'));
       req.flash('formData', req.body);
-      return res.redirect('/auth/login');
+      req.session.save(() => {
+        res.redirect('/auth/login');
+      });
+      return;
     }
+
 
     req.session.userId = user.id;
     req.flash('success', 'Login successful! Welcome to Digilocker.');
@@ -172,12 +194,21 @@ async function login(req, res) {
   }
 }
 
+export const postLogout = (req, res) => {
+  req.flash('success', 'You have logged out successfully');
+  req.session.userId = null; // user logged out
+  res.redirect('/');
+};
+
 const authController = {
-  signup,
+  getSignup,
+  postSignup,
   getVerifyOtp,
   postVerifyOtp,
   resendOtp, 
-  login
+  getLogin,
+  postLogin,
+  postLogout
 };
 
 export default authController;
