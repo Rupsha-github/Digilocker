@@ -1,0 +1,74 @@
+<%- include("../layouts/boilerplate.ejs") -%>
+
+<div class="container mt-4">
+  <h2>Your Digilocker Folders</h2>
+
+  <!-- Create Folder -->
+  <form method="POST" action="/create-folder" class="d-flex gap-2 mt-3">
+    <input name="folderName" class="form-control" placeholder="New folder name" required>
+    <button class="btn btn-outline-primary fs-6 px-0">
+      <i class="bi bi-plus-lg me-1"></i> Create New Folder
+    </button>
+  </form>
+
+  <!-- Folder List -->
+  <ul class="list-group mt-4">
+    <% folders.forEach(folder => { %>
+      <li class="list-group-item folder-item d-flex justify-content-between align-items-center mb-2" data-id="<%= folder.id %>">
+        <span><%= folder.name %></span>
+        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFolderModal" data-id="<%= folder.id %>" data-name="<%= folder.name %>" title="Delete folder">
+          <img width="22" height="22" src="https://img.icons8.com/material-rounded/24/FFFFFF/filled-trash.png" alt="filled-trash"/>
+          <i class="bi bi-trash"></i>
+        </button>
+      </li>
+    <% }) %>
+  </ul>
+</div>
+
+<!-- Delete Folder Modal -->
+<div class="modal fade" id="deleteFolderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <form method="POST" id="deleteFolderForm">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Delete folder <strong id="folderName"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('.folder-item').forEach(item => {
+    item.addEventListener('dblclick', () => {
+      const folderId = item.getAttribute('data-id');
+      window.location.href = `/folder/${folderId}`;
+    });
+  });
+
+  const deleteFolderModal = document.getElementById('deleteFolderModal');
+  deleteFolderModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const folderId = button.getAttribute('data-id');
+    const folderName = button.getAttribute('data-name');
+
+    document.getElementById('folderName').textContent = folderName;
+    document.getElementById('deleteFolderForm').action = `/delete-folder/${folderId}`;
+  });
+</script>
+
+<style>
+  .folder-item:hover {
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+  }
+</style>

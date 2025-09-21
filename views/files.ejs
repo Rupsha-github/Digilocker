@@ -1,0 +1,140 @@
+<%- include("../layouts/boilerplate.ejs") -%>
+
+<div class="container mt-4">
+  <h3><%= folder.name %></h3>
+
+  <!-- Upload File -->
+  <div class="card mt-4 shadow-sm border-0">
+    <div class="card-body">
+      <h5 class="card-title mb-3">Upload a File</h5>
+      <form method="POST" action="/upload-file" enctype="multipart/form-data" id="uploadForm">
+        <input type="hidden" name="folderId" value="<%= folder.id %>">
+
+        <div class="mb-3">
+          <label for="fileInput" class="form-label">Choose a file (PDF or JPG)</label>
+          <input type="file" class="form-control" id="fileInput" name="file" accept=".pdf,.jpg,.jpeg" required>
+          <div class="form-text text-muted">Maximum file size allowed: <strong>2MB</strong></div>
+          <div class="invalid-feedback text-danger mt-2" id="fileError" hidden>
+            File size exceeds 2MB. Please choose a smaller file.
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-success">
+          <i class="bi bi-cloud-upload me-1"></i> Upload
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- File List -->
+  <ul class="list-group mt-4">
+    <% files.forEach(file => { %>
+      <li class="list-group-item file-item d-flex justify-content-between align-items-center mb-2">
+        <span><%= file.filename %></span>
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal" data-id="<%= file.id %>" title="File Preview">
+            <img width="20" height="20" src="https://img.icons8.com/ios-filled/50/FFFFFF/file-preview.png" alt="file-preview"/>
+          </button>
+          <a href="/download-file/<%= file.id %>" class="btn text-align-center px-2 btn-sm btn-success" title="Download File">
+            <img width="22" height="22" src="https://img.icons8.com/material-sharp/24/FFFFFF/download--v1.png" alt="download--v1"/>
+          </a>
+          <button class="btn btn-sm btn-danger px-2.5" title="Delete File"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteFileModal"
+                  data-id="<%= file.id %>"
+                  data-name="<%= file.filename %>">
+            <img width="22" height="22" src="https://img.icons8.com/material-rounded/24/FFFFFF/filled-trash.png" alt="filled-trash"/>
+          </button>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+</div>
+
+<!-- File Preview Modal -->
+<div class="modal fade" id="fileModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" style="overflow: hidden;">
+      <div class="modal-header">
+        <h5 class="modal-title">File Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0 text-center">
+        <iframe id="fileViewer" style="width:100%; height:80vh; border:none;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete File Modal -->
+<div class="modal fade" id="deleteFileModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <form method="POST" id="deleteFileForm">
+        <input type="hidden" name="folderId" value="<%= folder.id %>">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>Delete file <strong id="fileName"></strong>?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Preview modal
+  const fileModal = document.getElementById('fileModal');
+  fileModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const fileId = button.getAttribute('data-id');
+    document.getElementById('fileViewer').src = `/view-file/${fileId}`;
+  });
+
+  // Delete modal
+  const deleteFileModal = document.getElementById('deleteFileModal');
+  deleteFileModal.addEventListener('show.bs.modal', event => {
+    const button = event.relatedTarget;
+    const fileId = button.getAttribute('data-id');
+    const fileName = button.getAttribute('data-name');
+
+    document.getElementById('fileName').textContent = fileName;
+    document.getElementById('deleteFileForm').action = `/delete-file/${fileId}`;
+  });
+
+  // File size validation
+  const uploadForm = document.getElementById('uploadForm');
+  const fileInput = document.getElementById('fileInput');
+  const fileError = document.getElementById('fileError');
+
+  uploadForm.addEventListener('submit', function (e) {
+    const file = fileInput.files[0];
+    if (file && file.size > 2 * 1024 * 1024) {
+      e.preventDefault();
+      fileError.hidden = false;
+      fileInput.classList.add('is-invalid');
+    } else {
+      fileError.hidden = true;
+      fileInput.classList.remove('is-invalid');
+    }
+  });
+</script>
+
+<style>
+  .file-item:hover {
+    cursor: pointer;
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .is-invalid {
+    border-color: #f5a3a3;
+    background-color: #fff5f5;
+  }
+</style>

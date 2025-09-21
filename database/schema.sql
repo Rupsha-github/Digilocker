@@ -8,3 +8,26 @@ CREATE TABLE users (
   email VARCHAR(255) UNIQUE,
   password VARCHAR(255)
 );
+
+
+CREATE TABLE folders (
+  id CHAR(36) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  user_id CHAR(36),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE files (
+  id CHAR(36) PRIMARY KEY,
+  filename VARCHAR(255) NOT NULL,
+  mimetype VARCHAR(100),
+  size INT,
+  content LONGBLOB,
+  folder_id CHAR(36),
+  user_id CHAR(36),
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (folder_id) REFERENCES folders(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

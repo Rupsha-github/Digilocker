@@ -8,6 +8,14 @@ export const isLoggedIn = (req, res, next) => {
   next();
 };
 
+export const ensureLoggedIn = (req, res, next) => {
+  if (!req.session.userId) {
+    req.flash('error', 'You are not yet logged in.');
+    return req.session.save(() => res.redirect('/login'));
+  }
+  next();
+};
+
 // to block unauthenticated users from accessing dashboard and logout paths
 export const requireAuth = (req, res, next) => {
   if (!req.session.userId) {
