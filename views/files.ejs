@@ -3,6 +3,16 @@
 <div class="container mt-4">
   <h3><%= folder.name %></h3>
 
+  <!-- Styled AJAX Search Bar -->
+  <form class="input-group mb-4 mt-3" onsubmit="return false;">
+    <input type="text" id="fileSearch" class="form-control" placeholder="Search files...">
+    <button class="btn btn-warning" type="button">
+      <img width="28" height="28" src="https://img.icons8.com/pastel-glyph/64/FFFFFF/search--v1.png" alt="search--v1"/>
+      <i class="bi bi-search"></i>
+    </button>
+  </form>
+  <p id="fileEmpty" class="text-muted mt-2" style="display:none;">No files found.</p>
+
   <!-- Upload File -->
   <div class="card mt-4 shadow-sm border-0">
     <div class="card-body">
@@ -27,9 +37,9 @@
   </div>
 
   <!-- File List -->
-  <ul class="list-group mt-4">
+  <ul class="list-group mt-4" id="fileList">
     <% files.forEach(file => { %>
-      <li class="list-group-item file-item d-flex justify-content-between align-items-center mb-2">
+      <li class="list-group-item file-item d-flex justify-content-between align-items-center mb-2" data-id="<%= file.id %>">
         <span><%= file.filename %></span>
         <div class="d-flex gap-2">
           <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal" data-id="<%= file.id %>" title="File Preview">
@@ -124,6 +134,77 @@
       fileInput.classList.remove('is-invalid');
     }
   });
+
+  // AJAX search with debounce
+  const fileSearch = document.getElementById('fileSearch');
+  const fileList = document.getElementById('fileList');
+  const fileEmpty = document.getElementById('fileEmpty');
+  const folderId = "<%= folder.id %>";
+
+  fileSearch.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      fileSearch.dispatchEvent(new Event('keyup'));
+    }
+  });
+
+  document.querySelector('.btn-warning').addEventListener('click', () => {
+    fileSearch.dispatchEvent(new Event('keyup'));
+  });
+
+  let fileTimer;
+  fileSearch.addEventListener('keyup', () => {
+    clearTimeout(fileTimer);
+    fileTimer = setTimeout(() => {
+      const term = fileSearch.value.trim();
+
+      if (term === '') {
+        window.location.reload();
+        return;
+      }
+
+      fetch(`/search-files/${folderId}?term=${encodeURIComponent(term)}`)
+        .then(res => res.json())
+        .then(data => {
+          fileList.innerHTML = '';
+          if (data.length === 0) {
+            fileEmpty.style.display = 'block';
+          } else {
+            fileEmpty.style.display = 'none';
+            data.forEach(file => {
+              const li = document.createElement('li');
+              li.className = 'list-group-item file-item d-flex justify-content-between align-items-center mb-2 search-match';
+              li.setAttribute('data-id', file.id);
+              li.innerHTML = `
+                <span>${file.filename}</span>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#fileModal" data-id="${file.id}" title="File Preview">
+                    <img width="20" height="20" src="https://img.icons8.com/ios-filled/50/FFFFFF/file-preview.png" alt="file-preview"/>
+                  </button>
+                  <a href="/download-file/${file.id}" class="btn text-align-center px-2 btn-sm btn-success" title="Download File">
+                                        <img width="22" height="22" src="https://img.icons8.com/material-sharp/24/FFFFFF/download--v1.png" alt="download--v1"/>
+                  </a>
+                  <button class="btn btn-sm btn-danger px-2.5" title="Delete File"
+                          data-bs-toggle="modal"
+                          data-bs-target="#deleteFileModal"
+                          data-id="${file.id}"
+                          data-name="${file.filename}">
+                    <img width="22" height="22" src="https://img.icons8.com/material-rounded/24/FFFFFF/filled-trash.png" alt="filled-trash"/>
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              `;
+              fileList.appendChild(li);
+            });
+          }
+        })
+        .catch(err => {
+          console.error('Search failed:', err);
+          fileList.innerHTML = '';
+          fileEmpty.style.display = 'block';
+        });
+  }, 300);
+});
 </script>
 
 <style>
@@ -131,6 +212,11 @@
     cursor: pointer;
     background-color: #f8f9fa;
     transition: background-color 0.2s ease-in-out;
+  }
+
+  .search-match {
+    background-color: #e6f7ff !important;
+    border-left: 4px solid #91d5ff;
   }
 
   .is-invalid {

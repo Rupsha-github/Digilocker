@@ -1,6 +1,25 @@
 import { db } from '../database/dbConnection.js';
 import { v4 as uuidv4 } from 'uuid';
 
+
+// Search folders by name (case-insensitive)
+export const searchFolders = async (req, res) => {
+  const userId = req.session.userId;
+  const term = req.query.term?.toLowerCase() || '';
+  const [folders] = await db.execute('SELECT * FROM folders WHERE user_id = ?', [userId]);
+  const filtered = folders.filter(f => f.name.toLowerCase().includes(term));
+  res.json(filtered);
+}
+
+// Search files by name within a folder (case-insensitive)
+export const searchFiles = async (req, res) => {
+  const folderId = req.params.folderId;
+  const term = req.query.term?.toLowerCase() || '';
+  const [files] = await db.execute('SELECT * FROM files WHERE folder_id = ?', [folderId]);
+  const filtered = files.filter(f => f.filename.toLowerCase().includes(term));
+  res.json(filtered);
+}
+
 // Renders all folders for the logged-in user
 export const renderFolders = async (req, res) => {
   const userId = req.session.userId;
@@ -13,13 +32,18 @@ export const renderFolders = async (req, res) => {
 export const renderFilesInFolder = async (req, res) => {
   const folderId = req.params.id;
   const userId = req.session.userId;
+  const search = req.query.search || ''; // check
 
   const [folder] = await db.execute('SELECT * FROM folders WHERE id = ? AND user_id = ?', [folderId, userId]);
-  const [files] = await db.execute('SELECT * FROM files WHERE folder_id = ?', [folderId]);
-
   if (folder.length === 0) return res.status(404).send('Folder not found');
 
-  res.render('files', { folder: folder[0], files });
+  const query = search
+    ? 'SELECT * FROM files WHERE folder_id = ? AND filename LIKE ?'
+    : 'SELECT * FROM files WHERE folder_id = ?';
+  const params = search ? [folderId, `%${search}%`] : [folderId];
+
+  const [files] = await db.execute(query, params);
+  res.render('files', { folder: folder[0], files, search });
 };
 
 // Creates a new folder

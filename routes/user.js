@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { renderFolders, renderFilesInFolder, createFolder, uploadFileToFolder, streamFile, downloadFile, deleteFolder, deleteFile } from '../controllers/documents.js';
+import { searchFolders, searchFiles, renderFolders, renderFilesInFolder, createFolder, uploadFileToFolder, streamFile, downloadFile, deleteFolder, deleteFile } from '../controllers/documents.js';
 import { ensureLoggedIn } from '../middlewares/authGuards.js';
 
 const router = express.Router();
@@ -39,5 +39,9 @@ router.get('/download-file/:id', ensureLoggedIn, downloadFile);
 // Delete routes
 router.post('/delete-folder/:id', ensureLoggedIn, deleteFolder);
 router.post('/delete-file/:id', ensureLoggedIn, deleteFile);
+
+// Search routes
+router.get('/search-folders', ensureLoggedIn, searchFolders);
+router.get('/search-files/:folderId', ensureLoggedIn, searchFiles);
 
 export default router;
