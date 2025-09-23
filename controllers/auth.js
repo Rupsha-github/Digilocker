@@ -8,7 +8,7 @@ dotenv.config();
 
 
 // Helper to send OTP email
-async function sendOtpEmail(to, otp) {
+async function sendOtpEmail(to, otp, context = 'Verify your email') {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -20,10 +20,11 @@ async function sendOtpEmail(to, otp) {
   await transporter.sendMail({
     from: '"Digilocker" <no-reply@digilocker.com>',
     to,
-    subject: 'Verify your email',
+    subject: context,
     text: `Your OTP is ${otp}. It expires in 10 minutes.`
   });
 }
+
 
 // GET : /auth/signup
 export const getSignup = (req, res) => {
@@ -194,21 +195,106 @@ async function postLogin(req, res) {
   }
 }
 
+// Logout
 export const postLogout = (req, res) => {
   req.flash('success', 'You have logged out successfully');
   req.session.userId = null; // user logged out
   res.redirect('/');
 };
 
+// GET : /auth/forgot-password
+export const getForgotPassword = (req, res) => {
+  res.render('forgot-password');
+}
+
+// POST : /auth/forgot-password
+export const postForgotPassword = async (req, res) => {
+  const {email} = req.body;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const [user] = await db.execute('SELECT * FROM users WHERE email = ?', [normalizedEmail]);
+  if(user.length === 0) {
+    req.flash('error', 'Email not found');
+    return res.redirect('/auth/forgot-password');
+  }
+
+  const otp = crypto.randomInt(100000, 999999).toString();
+  const expiresAt = Date.now() + 10 * 60 * 1000;
+
+  req.session.resetOtp = otp;
+  req.session.resetEmail = normalizedEmail;
+  req.session.resetExpires = expiresAt;
+
+  await sendOtpEmail(normalizedEmail, otp, 'Reset your Digilocker password');
+  res.redirect('/auth/verify-reset-otp');
+}
+
+// GET : /auth/verify-reset-otp
+export const getVerifyResetOtp = (req, res) => {
+  res.render('verify-reset-otp', { error: null });
+};
+
+// POST : /auth/verify-reset-otp
+export async function postVerifyResetOtp(req, res) {
+  const { otp } = req.body;
+  const { resetOtp, resetEmail, resetExpires } = req.session;
+
+  if (!resetOtp || !resetEmail || Date.now() > resetExpires) {
+    req.session.resetOtp = null;
+    req.session.resetEmail = null;
+    return res.render('verify-reset-otp', { error: 'OTP expired. Please try again.' });
+  }
+
+  if (otp !== resetOtp) {
+    return res.render('verify-reset-otp', { error: 'Invalid OTP. Please try again.' });
+  }
+
+  res.render('reset-password', { email: resetEmail });
+}
+
+// POST : /auth/reset-password
+export async function postResetPassword(req, res) {
+  const { email, newPassword } = req.body;
+
+  const [rows] = await db.execute('SELECT password FROM users WHERE email = ?', [email]);
+  if (rows.length === 0) {
+    req.flash('error', 'User not found.');
+    return res.redirect('/auth/forgot-password');
+  }
+
+  const currentHashedPassword = rows[0].password;
+  const isSame = await bcrypt.compare(newPassword, currentHashedPassword);
+  if (isSame) {
+    req.flash('error', 'New password cannot be the same as the old password.');
+    return res.redirect('/auth/forgot-password');
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+  await db.execute('UPDATE users SET password = ? WHERE email = ?', [hashed, email]);
+
+  req.session.resetOtp = null;
+  req.session.resetEmail = null;
+  req.session.resetExpires = null;
+
+  req.flash('success', 'Password updated successfully. You can now log in.');
+  res.redirect('/auth/login');
+}
+
+// Export all
 const authController = {
   getSignup,
   postSignup,
   getVerifyOtp,
   postVerifyOtp,
-  resendOtp, 
+  resendOtp,
   getLogin,
   postLogin,
-  postLogout
+  postLogout,
+  getForgotPassword,
+  postForgotPassword,
+  getVerifyResetOtp,
+  postVerifyResetOtp,
+  postResetPassword
 };
 
 export default authController;

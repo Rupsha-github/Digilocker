@@ -26,4 +26,14 @@ router.route('/login')
 // LOGOUT ROUTE
 router.post('/logout', requireAuth, authController.postLogout);
 
+// FORGOT PASSWORD VIA OTP ROUTES
+router.route('/forgot-password')
+      .get(authController.getForgotPassword)
+      .post(authController.postForgotPassword);
+router.route('/verify-reset-otp')
+      .get(authController.getVerifyResetOtp)
+      .post(authController.postVerifyResetOtp);
+router.post('/reset-password', authController.postResetPassword);
+
+
 export default router;
