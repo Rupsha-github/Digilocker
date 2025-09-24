@@ -1,4 +1,5 @@
 <%- include("../layouts/boilerplate.ejs") -%>
+<link rel="stylesheet" href="/css/home.css">
 
 <% if (successMessage && successMessage.length > 0) { %>
   <div class="alert alert-success text-center mt-3 mx-auto" style="max-width: 600px;">
@@ -19,18 +20,46 @@
 <% } %>
 
 <body>
-    <div class="container-fluid d-flex justify-content-center align-items-center min-vh-100">
-            <!-- <h1>Home Page</h1> -->
-            <div class="card" style="width: 25rem;">
-                <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
-            </div>
-        </div>
+    <div class="hero-heading text-center mt-4">
+      <h1 class="display-5 fw-semibold text-gradient">Digilocker</h1>
+      <p class="lead text-muted">Your secure vault for documents—accessible anytime, anywhere.</p>
     </div>
-    <script src="/js/timeout.js"></script>
+    <section class="home-carousel container">
+      <div id="featureCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner text-center">
+          <div class="carousel-item active">
+            <h4 class="carousel-title">&#x1F510; Secure OTP Based Profile Verification</h4>
+            <p class="carousel-text">Your documents are protected with time-sensitive OTPs and session-based access.</p>
+          </div>
+          <div class="carousel-item">
+            <h4 class="carousel-title">&#x1F4C1; Organized Folder Structure</h4>
+            <p class="carousel-text">You may create folders for categorizing files according to their types.</p>
+          </div>
+          <div class="carousel-item">
+            <h4 class="carousel-title">&#x1F504; Password Reset Using Forgot Password Feature</h4>
+            <p class="carousel-text">Reset your password securely using OTP verification.</p>
+          </div>
+          <div class="carousel-item">
+            <h4 class="carousel-title">&#128228; Upload, Preview and Download</h4>
+            <p class="carousel-text">PDF, JPG and JPEG files up to 2MB are supported for all these actions.</p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#featureCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#featureCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </section>
+<script>
+  const carousel = document.querySelector('#featureCarousel');
+  const bootstrapCarousel = new bootstrap.Carousel(carousel, {
+    interval: 4000,
+    ride: 'carousel',
+    pause: false
+  });
+</script>
+<script src="/js/timeout.js"></script>
 </body>
 </html>

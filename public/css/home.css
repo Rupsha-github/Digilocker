@@ -1,0 +1,88 @@
+.hero-heading h1 {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #2922aa;
+}
+
+.hero-heading p {
+  font-size: 1.1rem;
+  color: #4a4a4a;
+  margin-top: 0;
+}
+
+.home-carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 2rem 1rem;
+}
+
+#featureCarousel {
+  width: 100%;
+  max-width: 700px; /* Lock the carousel width */
+  margin: auto;
+}
+
+.carousel-inner {
+  background: linear-gradient(to right, #f9f9fc, #e2e2f2);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  min-height: 220px;
+  width: 100%;
+}
+
+.carousel-item {
+  height: 220px;
+  width: 100%;
+  padding-top: 4.5rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.carousel-content {
+  max-width: 500px; /* Constrain content width */
+  width: 100%;
+  margin: auto;
+}
+
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 4rem; /* Larger width */
+  height: 4rem; /* Larger height */
+  background-size: 100% 100%; /* Ensures full coverage */
+  filter: brightness(0) saturate(100%) invert(25%) sepia(100%) saturate(800%) hue-rotate(210deg);
+  /* Deeper bluish tint */
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
+  opacity: 0.9;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.carousel-control-prev-icon:hover,
+.carousel-control-next-icon:hover {
+  transform: scale(1.2); /* Slight zoom on hover */
+  filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(1000%) hue-rotate(210deg);
+  opacity: 0.8;
+}
+
+
+@media (max-width: 576px) {
+  .carousel-title {
+    font-size: 1.2rem;
+  }
+
+  .carousel-text {
+    font-size: 0.95rem;
+  }
+
+  .carousel-inner {
+    padding: 1.5rem;
+  }
+}
