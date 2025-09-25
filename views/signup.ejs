@@ -51,10 +51,12 @@
       form.addEventListener('submit', function (event) {
         // Reset custom validity
         passwordConfirm.setCustomValidity('');
+        passwordConfirm.classList.remove('is-invalid');
 
         // Check if passwords match
         if (password.value !== passwordConfirm.value) {
           passwordConfirm.setCustomValidity('Passwords do not match');
+          passwordConfirm.classList.add('is-invalid');
         }
 
         if (!form.checkValidity()) {

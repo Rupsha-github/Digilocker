@@ -7,8 +7,9 @@
 
 .hero-heading p {
   font-size: 1.1rem;
-  color: #4a4a4a;
+  color: #171313;
   margin-top: 0;
+  font-weight: 400;
 }
 
 .home-carousel {
