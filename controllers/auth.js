@@ -252,6 +252,14 @@ export async function postVerifyResetOtp(req, res) {
   res.render('reset-password', { email: resetEmail });
 }
 
+// GET : /auth/reset-password
+export async function getResetPassword(req, res) {
+  const error = req.flash('error');
+  const email = req.session.resetEmail;
+  if (!email) return res.redirect('/auth/forgot-password');
+  res.render('reset-password', { email, error });
+}
+
 // POST : /auth/reset-password
 export async function postResetPassword(req, res) {
   const { email, newPassword } = req.body;
@@ -266,7 +274,7 @@ export async function postResetPassword(req, res) {
   const isSame = await bcrypt.compare(newPassword, currentHashedPassword);
   if (isSame) {
     req.flash('error', 'New password cannot be the same as the old password.');
-    return res.redirect('/auth/forgot-password');
+    return res.redirect('/auth/reset-password');
   }
 
   const hashed = await bcrypt.hash(newPassword, 10);
@@ -294,6 +302,7 @@ const authController = {
   postForgotPassword,
   getVerifyResetOtp,
   postVerifyResetOtp,
+  getResetPassword,
   postResetPassword
 };
 

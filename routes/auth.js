@@ -33,7 +33,9 @@ router.route('/forgot-password')
 router.route('/verify-reset-otp')
       .get(authController.getVerifyResetOtp)
       .post(authController.postVerifyResetOtp);
-router.post('/reset-password', authController.postResetPassword);
+router.route('/reset-password')
+      .get(authController.getResetPassword)
+      .post(authController.postResetPassword);
 
 
 export default router;

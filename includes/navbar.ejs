@@ -1,18 +1,17 @@
-<nav>
-  <ul>
-    <li>
-      <a href="/" style="display: inline-flex; align-items: center; gap: 6px; text-decoration: none; vertical-align: middle;">
-        <img width="20" height="20" src="https://img.icons8.com/material/24/FFFFFF/home--v5.png" alt="home--v5" style="vertical-align: middle;" />
-        <span style="font-size: large;">Home</span>
-      </a>
-    </li>
-  </ul>
+<link rel="stylesheet" href="/css/nav.css">
+<nav class="main-nav">
+  <div class="nav-header">
+    <a href="/" class="nav-home">
+      <img src="https://img.icons8.com/material/24/FFFFFF/home--v5.png" alt="Home icon" />
+      <span>Home</span>
+    </a>
+  </div>
 
-  <ul>
+  <ul class="nav-links">
     <% if (userId) { %>
-      <li><a href="/get-documents">My Documents</a></li>
+      <li><a href="/get-documents">Documents</a></li>
       <li>
-        <form method="POST" action="/auth/logout" style="display: inline;">
+        <form method="POST" action="/auth/logout" class="logout-form">
           <button type="submit" class="logout-button">Logout</button>
         </form>
       </li>
@@ -22,3 +21,13 @@
     <% } %>
   </ul>
 </nav>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const links = document.querySelector('.nav-links');
+
+  toggle.addEventListener('click', () => {
+    links.classList.toggle('active');
+  });
+});
+</script>
