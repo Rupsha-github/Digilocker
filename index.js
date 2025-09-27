@@ -22,15 +22,14 @@ app.use(session({
   secret: process.env.SECRET_KEY, 
   resave: false,
   saveUninitialized: false,
+  rolling: true, // every activity pushes the current session expiry time forward by 10 mins
   cookie: { 
-    maxAge: 600000,  //expires after 10 minutes
-    httpOnly: true,
-    sameSite: 'lax'
+    maxAge: 600000,  // session expires after 10 mins of inactivity
   } 
 }));
 
 app.use(flash());
-// Make flash messages available in all views
+// makes flash messages available in all views
 app.use((req, res, next) => {
   res.locals.successMessage = req.flash('success');
   res.locals.errorMessage = req.flash('error');
@@ -51,7 +50,7 @@ app.use((req, res, next) => {
 
 
 (async() => {
-// Create the connection to database
+// create the connection to database
 const connection = await mysql.createConnection({
   host: process.env.MYSQL_HOST,
   user: process.env.MYSQL_USER,
@@ -83,7 +82,7 @@ try {
 } catch (err) {
     console.error('Error:', err);
 } finally {
-    // Ensure the connection is closed
+    // ensures the connection is closed
     connection.end();
 }
 })()

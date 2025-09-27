@@ -125,7 +125,7 @@ async function postVerifyOtp(req, res) {
 
   req.session.pendingUser = null;
   req.flash('success', 'Signup and email verification was successful! You can now log in.');
-  res.redirect('/login');
+  res.redirect('/auth/login');
 }
 
 // POST : /auth/resend-otp
@@ -147,7 +147,7 @@ async function resendOtp(req, res) {
 
 // GET : /auth/login
 export const getLogin = (req, res) => {
-  res.render('login')
+  res.render('login');
 };
 
 
@@ -177,7 +177,6 @@ async function postLogin(req, res) {
 
     if (!match) {
       req.flash('error', 'Invalid password.');
-      req.flash('formData', req.body);
       req.session.save(() => {
         res.redirect('/auth/login');
       });

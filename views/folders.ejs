@@ -3,7 +3,7 @@
 
 <div class="container mt-4">
   <h2>Your Digilocker Folders</h2>
-  <h6 class="instruction text-muted">Double-click on the folders to view its files.</h6>
+  <h6 class="instruction text-muted">Double-click on the folders or click on the Open Folder icon to view its files.</h6>
 
   <!-- Styled AJAX Search Bar -->
   <form class="input-group mb-4 mt-3" onsubmit="return false;">
@@ -29,8 +29,8 @@
     <li class="list-group-item folder-item d-flex justify-content-between align-items-center mb-2" data-id="<%= folder.id %>">
       <span><%= folder.name %></span>
       <div class="d-flex gap-2">
-        <!-- Open button: visible only on small screens -->
-        <button class="btn btn-sm btn-outline-success d-md-none open-folder-btn" data-id="<%= folder.id %>" title="Open folder">
+        <!-- Open button -->
+        <button class="btn btn-sm btn-outline-success open-folder-btn" data-id="<%= folder.id %>" title="Open folder">
           <img width="22" height="22" src="https://img.icons8.com/ios-filled/50/228BE6/opened-folder.png" alt="opened-folder"/>
           <i class="bi bi-folder2-open"></i>
         </button>

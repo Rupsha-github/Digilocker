@@ -1,3 +1,4 @@
+// Timeout for flash messages disappearing after 3 secs of getting displayed
 setTimeout(() => {
   const alert = document.querySelector('.alert');
   if (alert) {

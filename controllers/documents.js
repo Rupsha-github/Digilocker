@@ -2,7 +2,7 @@ import { db } from '../database/dbConnection.js';
 import { v4 as uuidv4 } from 'uuid';
 
 
-// Search folders by name (case-insensitive)
+// searches folders by name (case-insensitive)
 export const searchFolders = async (req, res) => {
   const userId = req.session.userId;
   const term = req.query.term?.toLowerCase() || '';
@@ -11,7 +11,7 @@ export const searchFolders = async (req, res) => {
   res.json(filtered);
 }
 
-// Search files by name within a folder (case-insensitive)
+// searches files by name within a folder (case-insensitive)
 export const searchFiles = async (req, res) => {
   const folderId = req.params.folderId;
   const term = req.query.term?.toLowerCase() || '';
@@ -20,7 +20,7 @@ export const searchFiles = async (req, res) => {
   res.json(filtered);
 }
 
-// Renders all folders for the logged-in user
+// renders all folders for the logged-in user
 export const renderFolders = async (req, res) => {
   const userId = req.session.userId;
   const [folders] = await db.execute('SELECT * FROM folders WHERE user_id = ?', [userId]);
@@ -28,7 +28,7 @@ export const renderFolders = async (req, res) => {
   res.render('folders', { folders });
 };
 
-// Renders all files inside a specific folder
+// renders all files inside a specific folder
 export const renderFilesInFolder = async (req, res) => {
   const folderId = req.params.id;
   const userId = req.session.userId;

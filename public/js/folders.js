@@ -76,7 +76,7 @@
               `;
               folderList.appendChild(li);
             });
-            attachFolderEvents(); // ✅ re-attach after rendering
+            attachFolderEvents(); // re-attach after rendering
           }
         })
         .catch(err => {

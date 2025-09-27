@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileEmpty = document.getElementById('fileEmpty');
   const folderId = document.getElementById('fileContainer').getAttribute('data-folder-id');
 
-  // Preview modal
+  // preview modal
   fileModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget;
     const fileId = button.getAttribute('data-id');
@@ -17,16 +17,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const ext = fileName.split('.').pop().toLowerCase();
 
     if (ext === 'pdf' && window.innerWidth < 576) {
-        // Prevent modal from opening
+        // prevent modal from opening if opening a pdf on small screen since it will be displayed in a new tab
         event.preventDefault();
 
-        // Open PDF in new tab
+        // open PDF in new tab
         window.open(`/view-file/${fileId}`, '_blank');
         return;
     }
 
     const wrapper = document.getElementById('fileViewerWrapper');
-    wrapper.innerHTML = ''; // Clear previous preview
+    wrapper.innerHTML = ''; // clear previous preview
 
     if (ext === 'pdf') {
         const embed = document.createElement('embed');

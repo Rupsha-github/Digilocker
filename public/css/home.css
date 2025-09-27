@@ -22,7 +22,7 @@
 
 #featureCarousel {
   width: 100%;
-  max-width: 700px; /* Lock the carousel width */
+  max-width: 700px; /* locks the carousel width */
   margin: auto;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .carousel-content {
-  max-width: 500px; /* Constrain content width */
+  max-width: 500px; /* locks content width */
   width: 100%;
   margin: auto;
 }
@@ -54,11 +54,10 @@
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  width: 4rem; /* Larger width */
-  height: 4rem; /* Larger height */
-  background-size: 100% 100%; /* Ensures full coverage */
+  width: 4rem; /* larger width */
+  height: 4rem; /* larger height */
+  background-size: 100% 100%; /* ensures full coverage */
   filter: brightness(0) saturate(100%) invert(25%) sepia(100%) saturate(800%) hue-rotate(210deg);
-  /* Deeper bluish tint */
   background-color: transparent;
   border-radius: 0;
   padding: 0;
@@ -68,7 +67,7 @@
 
 .carousel-control-prev-icon:hover,
 .carousel-control-next-icon:hover {
-  transform: scale(1.2); /* Slight zoom on hover */
+  transform: scale(1.2); /* slight zoom on hover */
   filter: brightness(0) saturate(100%) invert(15%) sepia(100%) saturate(1000%) hue-rotate(210deg);
   opacity: 0.8;
 }

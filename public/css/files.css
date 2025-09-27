@@ -28,7 +28,6 @@
   border: none;
 }
 
-/* Optional modal layout tweaks */
 .modal-dialog {
   max-width: 50%;
 }
@@ -39,7 +38,6 @@
 }
 
 
-/* Responsive fix for small screens */
 @media (max-width: 576px) {
     #fileViewerWrapper img {
     height: 60vh;
