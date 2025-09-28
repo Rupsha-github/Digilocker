@@ -1,7 +1,6 @@
 import express from 'express';
 import authController from '../controllers/auth.js';
-import { requirePendingUser } from '../middlewares/requirePendingUser.js';
-import { isLoggedIn, requireAuth } from '../middlewares/authGuards.js';
+import { isLoggedIn, requireAuth, requirePendingUser, requireResetSession } from '../middlewares/authGuards.js';
 
 const router = express.Router();
 
@@ -31,11 +30,11 @@ router.route('/forgot-password')
       .get(authController.getForgotPassword)
       .post(authController.postForgotPassword);
 router.route('/verify-reset-otp')
-      .get(authController.getVerifyResetOtp)
-      .post(authController.postVerifyResetOtp);
+      .get(requireResetSession, authController.getVerifyResetOtp)
+      .post(requireResetSession, authController.postVerifyResetOtp);
 router.route('/reset-password')
-      .get(authController.getResetPassword)
-      .post(authController.postResetPassword);
+      .get(requireResetSession, authController.getResetPassword)
+      .post(requireResetSession, authController.postResetPassword);
 
 
 export default router;

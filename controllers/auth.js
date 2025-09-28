@@ -248,7 +248,7 @@ export async function postVerifyResetOtp(req, res) {
     return res.render('verify-reset-otp', { error: 'Invalid OTP. Please try again.' });
   }
 
-  res.render('reset-password', { email: resetEmail });
+  res.render('reset-password', { email: resetEmail, clearTimer: true });
 }
 
 // GET : /auth/reset-password
