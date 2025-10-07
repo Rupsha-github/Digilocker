@@ -1,31 +1,25 @@
 import { db } from '../database/dbConnection.js';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
-import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
+import { Resend } from 'resend';
 dotenv.config();
 
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 // Helper to send OTP email
 async function sendOtpEmail(to, otp, context = 'Verify your email') {
-  const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false, // TLS
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  connectionTimeout: 10000 // Optional: 10s timeout
-});
-
-  await transporter.sendMail({
-    from: '"Digilocker" <no-reply@digilocker.com>',
-    to,
-    subject: context,
-    text: `Your OTP is ${otp}. It expires in 10 minutes.`
-  });
+  try {
+    await resend.emails.send({
+      from: 'Digilocker <onboarding@resend.dev>',
+      to,
+      subject: context,
+      text: `Your OTP is ${otp}. It expires in 10 minutes.`
+    });
+    console.log('OTP email sent via Resend');
+  } catch (err) {
+    console.error('Resend email error:', err);
+  }
 }
 
 
