@@ -1,6 +1,7 @@
-CREATE DATABASE user;
-
-USE user;
+-- -- 
+-- CREATE DATABASE user;  
+-- -- 
+-- USE user;
 
 CREATE TABLE users (
   id CHAR(36) PRIMARY KEY,
