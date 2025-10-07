@@ -10,6 +10,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Helper to send OTP email
 async function sendOtpEmail(to, otp, context = 'Verify your email') {
   try {
+    console.log('Sending to:', to);
     await resend.emails.send({
       from: 'Digilocker <onboarding@resend.dev>',
       to,
@@ -74,6 +75,7 @@ async function postSignup(req, res) {
       expiresAt
     };
 
+    console.log("Calling sendOtpEmail");
     await sendOtpEmail(normalizedEmail, otp);
     res.redirect('/auth/verify-otp');
   } catch (err) {
