@@ -10,12 +10,15 @@ dotenv.config();
 // Helper to send OTP email
 async function sendOtpEmail(to, otp, context = 'Verify your email') {
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
+  host: 'smtp.gmail.com',
+  port: 587,
+  secure: false, // TLS
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  },
+  connectionTimeout: 10000 // Optional: 10s timeout
+});
 
   await transporter.sendMail({
     from: '"Digilocker" <no-reply@digilocker.com>',
